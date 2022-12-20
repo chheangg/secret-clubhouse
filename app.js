@@ -15,10 +15,10 @@ require('express-async-errors');
 const config = require('./utility/config');
 
 // MongoDB Config
-const db = mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-db.on('error', error => {
-  console.error('Error in MongoDB connection:' + error);
-})
+mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+
+const db = mongoose.connection
+db.on('error', console.error.bind(console, "MongoDB connection error:"))
 
 // Main express app
 const app = express();

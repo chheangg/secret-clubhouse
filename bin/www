@@ -9,7 +9,7 @@ var debug = require('debug')('secret-clubhouse:server');
 var http = require('http');
 
 // Utilities
-const config = require('./utility/config')
+const config = require('../utility/config')
 
 /**
  * Get port from environment and store in Express.
