@@ -10,6 +10,9 @@ const mongoose = require('mongoose');
 require('express-async-errors');
 
 // Routes
+const indexRouter = require('./routes/indexRouter')
+const userRouter = require('./routes/userRouter')
+const usersRouter = require('./routes/usersRouter')
 
 // Utilities
 const config = require('./utility/config');
@@ -34,6 +37,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes middleware
+app.use('/', indexRouter)
+app.use('/users', usersRouter)
+app.use('/user', userRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

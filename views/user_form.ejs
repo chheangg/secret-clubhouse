@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('head', { page_title: 'Secret clubhouse' }) %>
+</head>
+<body>
+  <h1><%= title %></h1>
+  <form method="POST" action="">
+    <% if (locals.user) { %>
+      <label for="family-name">Family name</label>
+      <input type="text" id="family-name" name="family_name" placeholder="Appleseed" value=<%= user.family_name %> >
+      <label for="given-name">Given name</label>
+      <input type="text" id="given-name" name="given_name" placeholder="John" value=<%= user.given_name %> >
+      <br>
+      <label for="email">Email</label>
+      <br>
+      <input type="email" id="email" name="username" placeholder="johnappleseed@gmail.com" value=<%= user.username %> >
+    <% } else { %>
+      <label for="family-name">Family name</label>
+      <input type="text" id="family-name" name="family_name" placeholder="Appleseed">
+      <label for="given-name">Given name</label>
+      <input type="text" id="given-name" name="given-name" placeholder="John">
+      <br>
+      <label for="email">Email</label>
+    <% } %>
+    <br>
+    <label for="password">Password</label>
+    <br>
+    <input type="password" id="password" name="password">
+    <br>
+    <label for="confirm-password">Confirm Password</label>
+    <br>
+    <input type="password" id="confirm-password" name="confirm_password">
+    <br>
+    <button type="submit"><%= buttonText %></button>
+  </form>
+  <% if (locals.errors) { %>
+    <ul>
+      <% for(let i = 0; i < errors.length; i++) { %>
+        <li><%= errors[i]['param'] %>: <%= errors[i]['msg'] %></li>
+      <% } %>
+    </ul>
+  <% } %>
+</body>
+</html>
