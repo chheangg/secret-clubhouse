@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('head', { page_title: 'Secret clubhouse' }) %>
+</head>
+<body>
+  <div>
+    <% if (locals.user) {%>
+      <h1>Membership</h1>
+      <% if (user.isMember) { %>
+        <p>Hey there <%= user.full_name %>, You are already a member of this club!</p>
+      <% } else { %>
+        <p>You are not a member of this club!</p>
+        <form method="POST" action="">
+          <label for="secret-passcode">Secret passcode</label>
+          <br>
+          <input id="secret-passcode" type="password" name="secret_passcode" placeholder="no hint haha">
+          <input value=<%= user._id.toString() %> name="userId" type="hidden">
+          <button type="submit">Enter</button>
+          <% if (locals.error) { %> 
+            <p><%= error %></p>
+          <% } %>
+        </form>
+      <% } %>
+    <% } else { %>
+      <h1>You must be logged in to see this</h1>
+    <% } %>
+  </div>
+</body>
+</html>

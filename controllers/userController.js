@@ -63,7 +63,7 @@ exports.user_create_post = [
     const user = new User({
       given_name: body.given_name,
       family_name: body.family_name,
-      username: body.family_name,
+      username: body.username,
       password: passwordHash,
       isMember: false
     })
@@ -72,3 +72,31 @@ exports.user_create_post = [
   }
 ]
 
+// Display a page to change and check user's membership.
+// They can become a member by entering a secret code.
+exports.user_membership_get = async (req, res) => {
+  const user = await User.findOne({ username: 'lyeangchheang@gmail.com' }, { username: 0, password: 0 })
+  res.render('user_membership_form', { user })
+}
+
+// Handle the changing of a user's membership
+exports.user_membership_post = [
+  body('secret_passcode')
+    .trim()
+    .escape(),
+  async (req, res) => {
+    const { userId, secret_passcode } = req.body
+    console.log(userId)
+    const user = await User.findById(userId, { username: 0, password: 0 })
+    console.log(config.SECRET_PASSCODE)
+    if (secret_passcode === config.SECRET_PASSCODE) {
+      user.isMember = true
+      await user.save()
+      console.log(user)
+      res.render('user_membership_form', { user })
+    } else {
+      const error = "Incorrect secret passcode"
+      res.render('user_membership_form', { user, error })
+    }
+  }
+]
