@@ -3,14 +3,10 @@ const router = express.Router()
 
 // Controllers
 const userController = require('../controllers/userController')
+const indexController = require('../controllers/indexController')
 
 // GET index homepage
-router.get('/', (req, res) => {
-  if (req.user) {
-    res.send(`${req.user.family_name + ' ' + req.user.given_name} logged in`)
-  }
-  res.send('Nothing is here')
-})
+router.get('/', indexController.index_page)
 
 // Get request for creating a user
 router.get('/sign-up', userController.user_create_get)

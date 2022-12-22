@@ -4,6 +4,12 @@
   <%- include('head', { page_title: 'Secret clubhouse' }) %>
 </head>
 <body>
-  Index
+  <% if (locals.currentUser) { %>
+    <p>Logged in as <%= currentUser.username %>. Welcome, <%= currentUser.full_name %>.</p>
+    <a href="/message/create">Create message</a>
+  <% } else { %>
+    <a href="/log-in">Login</a>
+    <a href="/sign-up">Sign up</a>
+  <% } %>
 </body>
 </html>

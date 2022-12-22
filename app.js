@@ -17,6 +17,7 @@ require('express-async-errors');
 const indexRouter = require('./routes/indexRouter')
 const userRouter = require('./routes/userRouter')
 const usersRouter = require('./routes/usersRouter')
+const messageRouter = require('./routes/messageRouter')
 
 // Model
 const User = require('./models/user')
@@ -78,7 +79,10 @@ app.use(passport.session())
 
 // Get user session if any
 app.use((req, res, next) => {
-  res.locals.currentUser = req.user
+  if (req.user) {
+    req.user.full_name = `${req.user.family_name} ${req.user.given_name}`
+    res.locals.currentUser = req.user
+  }
   next()
 })
 
@@ -86,6 +90,7 @@ app.use((req, res, next) => {
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
 app.use('/user', userRouter)
+app.use('/message', messageRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

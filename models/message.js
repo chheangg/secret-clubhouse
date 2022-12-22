@@ -11,9 +11,14 @@ const messageSchema = new Schema({
     type: String,
     required: true,
   },
-  description: {
+  message: {
     type: String,
     minLength: 3,
+    required: true,
+  },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
     required: true,
   }
 })
