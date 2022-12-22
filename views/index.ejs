@@ -11,5 +11,15 @@
     <a href="/log-in">Login</a>
     <a href="/sign-up">Sign up</a>
   <% } %>
+  <% if (locals.messages) { %>
+    <% for (let i = 0; i < messages.length; i++) { %>
+      <div>
+        <div><%= messages[i]['title'] %></div>
+        <div><%= messages[i]['timestamp'] ? messages[i]['timestamp'] : 'hidden' %></div>
+        <div><%= messages[i]['message'] %></div>
+        <div>Posted by <%= messages[i]['user'] ? messages[i]['user']['full_name'] : 'Anonymous' %></div>
+      </div>
+    <% } %>
+  <% } %>
 </body>
 </html>
