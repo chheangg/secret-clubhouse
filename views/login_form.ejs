@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('head', { page_title: 'Secret clubhouse' }) %>
+</head>
+<body>
+  <h1><%= title %></h1>
+  <form method="POST" action="">
+    <% if (locals.user) { %>
+      <label for="email">Username</label>
+      <br>
+      <input type="email" id="email" name="username" placeholder="johnappleseed@gmail.com" value=<%= user.username %>>
+    <% } else { %>
+      <label for="email">Username</label>
+      <br>
+      <input type="email" id="email" name="username" placeholder="johnappleseed@gmail.com">
+    <% } %>
+    <br>
+    <label for="password">Password</label>
+    <br>
+    <input type="password" id="password" name="password">
+    <br>
+    <button type="submit"><%= buttonText %></button>
+  </form>
+  <% if (locals.errors) { %>
+    <ul>
+      <% if (locals.error) { %>
+        <li><%= error %></li>
+      <% } %>
+      <% for(let i = 0; i < errors.length; i++) { %>
+        <li><%= errors[i]['msg'] %></li>
+      <% } %>
+    </ul>
+  <% } %>
+</body>
+</html>

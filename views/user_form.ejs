@@ -38,7 +38,7 @@
   <% if (locals.errors) { %>
     <ul>
       <% for(let i = 0; i < errors.length; i++) { %>
-        <li><%= errors[i]['param'] %>: <%= errors[i]['msg'] %></li>
+        <li><%= errors[i]['msg'] %></li>
       <% } %>
     </ul>
   <% } %>

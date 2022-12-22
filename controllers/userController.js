@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt')
 const User = require('../models/user')
 const { body, validationResult } = require('express-validator')
 const config = require('../utility/config')
+const passport = require('passport')
 
 // Display a list of all users
 exports.user_list = (req, res) => {
@@ -49,6 +50,8 @@ exports.user_create_post = [
   async (req, res, next) => {
     const errors = validationResult(req)
     const body = req.body
+
+    // Check validation errors
     if (!errors.isEmpty()) {
       res.render('user_form', {
         title: 'Sign up user',
@@ -58,6 +61,18 @@ exports.user_create_post = [
       })
       return
     }
+
+    // Check if user already exists
+    const userExist = await User.findOne({ username: body.username })
+    if (userExist) {
+      res.render('user_form', {
+        title: 'Sign up user',
+        buttonText: 'Sign-up',
+        user: body,
+        errors: [{ msg: 'Username is already taken' }]
+      })
+    }
+
     const saltRounds = 10
     const passwordHash = await bcrypt.hash(body.password, saltRounds)
     const user = new User({
@@ -75,8 +90,7 @@ exports.user_create_post = [
 // Display a page to change and check user's membership.
 // They can become a member by entering a secret code.
 exports.user_membership_get = async (req, res) => {
-  const user = await User.findOne({ username: 'lyeangchheang@gmail.com' }, { username: 0, password: 0 })
-  res.render('user_membership_form', { user })
+  res.render('user_membership_form')
 }
 
 // Handle the changing of a user's membership
@@ -86,17 +100,59 @@ exports.user_membership_post = [
     .escape(),
   async (req, res) => {
     const { userId, secret_passcode } = req.body
-    console.log(userId)
-    const user = await User.findById(userId, { username: 0, password: 0 })
+    const user = await User.findById(userId, { password: 0 })
     console.log(config.SECRET_PASSCODE)
     if (secret_passcode === config.SECRET_PASSCODE) {
       user.isMember = true
       await user.save()
-      console.log(user)
-      res.render('user_membership_form', { user })
+      res.render('user_membership_form', { currentUser: user })
     } else {
       const error = "Incorrect secret passcode"
-      res.render('user_membership_form', { user, error })
+      res.render('user_membership_form', { error })
     }
   }
 ]
+
+// Display a login form
+exports.user_login_get = (req, res) => {
+  if (req.session.messages) {
+    res.render('login_form', { 
+      title: 'Login',
+      buttonText: 'Sign in', 
+      user: req.session.user,
+      errors: req.session.messages.map(msg => {
+        return {
+          msg
+        }
+      })})
+  }
+  res.render('login_form', { title: 'Login', buttonText: 'Sign in' })
+}
+
+// Handle authentication
+exports.user_login_post = [
+  body('username')
+    .trim()
+    .escape()
+    .isEmail()
+    .withMessage('Username must be an email')
+    .normalizeEmail(),
+  body('password')
+    .trim()
+    .escape()
+    .isLength({ min: 8 })
+    .withMessage('Password must be at least 8 characters long'),
+  (req, res, next) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      res.render('login_form', { title: 'Login', buttonText: 'Sign in', errors: errors.array()})
+    }
+    next()
+  },
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/log-in",
+    failureMessage: true,
+  })
+]
+  

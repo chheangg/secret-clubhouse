@@ -5,6 +5,10 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
+const session = require('express-session')
+const passport = require('passport')
+const LocalStrategy = require('passport-local').Strategy
+const bcrypt = require('bcrypt')
 
 // convention in this project is using ES6's async rather than async module
 require('express-async-errors');
@@ -13,6 +17,9 @@ require('express-async-errors');
 const indexRouter = require('./routes/indexRouter')
 const userRouter = require('./routes/userRouter')
 const usersRouter = require('./routes/usersRouter')
+
+// Model
+const User = require('./models/user')
 
 // Utilities
 const config = require('./utility/config');
@@ -35,6 +42,45 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Authentication config
+passport.use(
+  new LocalStrategy(async (username, password, done) => {
+    try {
+      const user = await User.findOne({ username })
+      if (!user) {
+        return done(null, false, { message: "Username not found" })
+      }
+      const passwordCheck = await bcrypt.compare(password, user.password)
+      if (!passwordCheck) {
+        return done(null, false, { message: "Incorrect password" })
+      }
+      return done(null, user)
+    } catch (err) {
+      done(err)
+    }
+  })
+)
+
+passport.serializeUser((user, done) => {
+  done(null, user._id)
+})
+
+passport.deserializeUser(async(id, done) => {
+  const user = await User.findById(id, { password: 0 })
+  done(null, user)
+})
+
+// Authentication
+app.use(session({ secret: config.SECRET, resave: false, saveUninitialized: true }))
+app.use(passport.initialize())
+app.use(passport.session())
+
+// Get user session if any
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user
+  next()
+})
 
 // Routes middleware
 app.use('/', indexRouter)
