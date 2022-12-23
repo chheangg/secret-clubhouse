@@ -98,6 +98,9 @@ exports.user_membership_post = [
   body('secret_passcode')
     .trim()
     .escape(),
+  body('userId')
+  .trim()
+  .escape(),
   async (req, res) => {
     const { userId, secret_passcode } = req.body
     const user = await User.findById(userId, { password: 0 })
@@ -154,5 +157,30 @@ exports.user_login_post = [
     failureRedirect: "/log-in",
     failureMessage: true,
   })
+]
+
+// Display form for making user admin
+exports.user_admin_get = (req, res) => {
+  res.render('admin_form')
+}
+
+// Handle making user admin
+exports.user_admin_post = [
+  body('secret_passcode')
+    .trim()
+    .escape(),
+  body('userId')
+    .trim()
+    .escape(),
+  async (req, res) => {
+    const { userId, secret_passcode } = req.body
+    if (secret_passcode !== config.SECRET_ADMIN_PASSCODE) {
+      res.render('admin_form', { error: 'Incorrect secret password' })
+    }
+    const user = await User.findById(userId)
+    user.isAdmin = true
+    await user.save()
+    res.render('admin_form')
+  }
 ]
   

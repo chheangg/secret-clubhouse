@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('head', { page_title: 'Secret Clubhouse' }) %>
+</head>
+<body>
+  <% if (locals.currentUser) {%>
+    <h1>Administrative Permission</h1>
+    <% if (currentUser.isAdmin) { %>
+      <p>Hey there <%= currentUser.full_name %>, You are already an admin</p>
+    <% } else { %>
+      <p>Make yourself admin</p>
+      <form method="POST" action="">
+        <label for="secret-passcode">Secret passcode</label>
+        <br>
+        <input id="secret-passcode" type="password" name="secret_passcode" placeholder="no hint haha">
+        <input value=<%= currentUser._id.toString() %> name="userId" type="hidden">
+        <button type="submit">Enter</button>
+        <% if (locals.error) { %> 
+          <p><%= error %></p>
+        <% } %>
+      </form>
+    <% } %>
+  <% } else { %>
+    <h1>You must be logged in to see this</h1>
+<% } %>
+</body>
+</html>

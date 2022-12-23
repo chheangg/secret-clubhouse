@@ -23,6 +23,9 @@ const userSchema = new Schema({
   isMember: {
     type: Boolean,
     required: true,
+  },
+  isAdmin: {
+    type: Boolean,
   }
 })
 

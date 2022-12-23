@@ -18,6 +18,14 @@
         <div><%= messages[i]['timestamp'] ? messages[i]['timestamp'] : 'hidden' %></div>
         <div><%= messages[i]['message'] %></div>
         <div>Posted by <%= messages[i]['user'] ? messages[i]['user']['full_name'] : 'Anonymous' %></div>
+        <% if (locals.currentUser) { %>
+          <% if (currentUser.isAdmin) { %>
+            <form method="POST" action="/message/delete">
+              <input type="hidden" name="messageId" value=<%= messages[i]._id.toString() %>>
+              <button type="submit">Delete</button>
+            </form>
+          <% } %>
+        <% } %>
       </div>
     <% } %>
   <% } %>

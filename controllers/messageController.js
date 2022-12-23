@@ -1,5 +1,4 @@
 const { body, validationResult } = require('express-validator')
-const message = require('../models/message')
 
 // Model
 const Message = require('../models/message')
@@ -41,5 +40,23 @@ exports.message_create_post = [
 
     await message.save()
     res.redirect('/')
+  }
+]
+
+// Handle message deletion
+exports.message_delete_post = [
+  body('messageId')
+    .trim()
+    .escape(),
+  async (req, res) => {
+    const { messageId } = req.body
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      res.render('index')
+      return
+    }
+
+    await Message.findByIdAndDelete(messageId)
+    res.render('index')
   }
 ]
